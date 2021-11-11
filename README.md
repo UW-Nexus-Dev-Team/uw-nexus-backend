@@ -1,4 +1,4 @@
-# nexus2021_be
+# uw-nexus-backend
 
 #TO DO: Take out all unnecessary commented lines and files. Create more documentation for everything.
 
