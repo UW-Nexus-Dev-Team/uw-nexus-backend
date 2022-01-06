@@ -2,7 +2,9 @@ const mongoose = require('mongoose')
 const constants = require('../constants/constants.js');
 
 const profileSchema = new mongoose.Schema({
-  user_id:  {  type: String  },
+  user_id:  {  
+    type: mongoose.Schema.Types.ObjectID,
+    ref: 'User' },
   first_name: { type: String },
   last_name: { type: String },
   education: {
@@ -26,5 +28,6 @@ const profileSchema = new mongoose.Schema({
   bio: { type: String },
   created_at: { type: Date, required: true},
   updated_at: { type: Date, required: true },
+  resume: { type: String},
 })
 module.exports = mongoose.model('Profile', profileSchema)

@@ -2,7 +2,6 @@ const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
 const config = require('dotenv'); // .env file
 const bcrypt = require('bcryptjs');
-
 // single database connection shared to all routes
 // other routes can access using getDb
 // const initDb = require("./db/db.js").initDb
@@ -11,7 +10,7 @@ const bodyParser = require("body-parser")
 const cors = require("cors");
 
 const multer = require('multer');
-const GridFsStorage = require('multer-gridfs-storage');
+const {GridFsStorage} = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
 const crypto = require("crypto");
@@ -47,9 +46,11 @@ app.use(function (req, res, next) {
   next()
 });
 
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
+app.use(express.json()) 
 
 
 app.get("/", (req, res) => {
@@ -83,15 +84,6 @@ mongoose.connect(mongoURI, {
     process.exit();
   });
 
-let conn = mongoose.connection;
-let gfs;
-
-conn.once('open', () => {
-  console.log('connected to the database');
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection('uploads');
-});
-
 // Create storage engine
 const storage = new GridFsStorage({
   url: mongoURI,
@@ -111,11 +103,25 @@ const storage = new GridFsStorage({
     });
   }
 });
-const upload = multer({ storage });
+
+const upload = multer({ storage,
+  limits: {fileSize: 200000000},
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  },
+});
+
+function checkFileType(file, cb) {
+  const filetypes = /pdf|docx/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+  if (mimetype && extname) return cb(null, true);
+  cb('filetype');
+}
+
 exports.upload = upload;
 
 require('./routes/auth.js')(app);
 require('./routes/projects.js')(app);
 require('./routes/profile.js')(app, upload);
 require('./routes/constants.js')(app);
-// require('./routes/uploads.js')(app, upload);

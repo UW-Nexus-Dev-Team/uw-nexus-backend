@@ -2,12 +2,27 @@ const config = require('../config/index.js');
 const User = require('../models/user.js')
 const Profile = require('../models/profile.js');
 const upload  = require("../app.js");
+const mongoose = require('mongoose');
 
-// can we assume that profile coming in is correct?
+// SET UP GRIDFS CONNECTION
+const url = config.MONGODB_URI;
+const connect = mongoose.createConnection(url, { useNewUrlParser: true, useUnifiedTopology: true });
+let gfs;
+connect.once('open', () => {
+    gfs = new mongoose.mongo.GridFSBucket(connect.db, {
+    bucketName: 'uploads',
+    });
+});
+
+const deleteFile = (id) => {
+    if (!id || id === 'undefined') return res.status(400).send('no file id');
+    const _id = new mongoose.Types.ObjectId(id);
+    gfs.delete(_id, (err) => {
+      if (err) return res.status(500).send('file deletion error');
+    });
+};
+
 exports.createProfile = (req, res) => {
-    // console.log('here');
-    // upload.single('file');
-    // console.log("File was uploaded successfully!");
     Profile.findOne({ user_id: req.id })
            .exec((err, profile) => {
                if (err) {
@@ -17,20 +32,23 @@ exports.createProfile = (req, res) => {
                    res.status(400).send({message: "Profile already exists"});
                    return;
                } else {
-                //    console.log(req.resume_id);
+                   const education = req.body.education ? JSON.parse(req.body.education) : undefined
+                   const interestList = req.body.interests ? JSON.parse(req.body.interests) : undefined
+                   const skillList = req.body.skills ? JSON.parse(req.body.skills) : undefined
                    const profile = new Profile({
                        user_id: req.id,
                        first_name: req.body.first_name,
                        last_name: req.body.last_name,
                        education: {
-                           campus: req.body.education.campus,
-                           year: req.body.education.year,
-                           major: req.body.education.major },
+                           campus: education.campus,
+                           year: education.year,
+                           major: education.major },
                        bio: req.body.description,
-                       skills: req.body.skills,
-                       interests: req.body.interests,
+                       skills: skillList,
+                       interests: interestList,
                        created_at: new Date(Date.now()),
                        updated_at: new Date(Date.now()),
+                       resume: (req.file ? req.file.id : undefined),
                    });
                    profile.save((err1, profile) => {
                        if (err1) {
@@ -98,7 +116,15 @@ exports.updateProfile = async (req, res) => {
             return;
         }
         else {
-            profile = await Profile.findOneAndUpdate({_id: req.params.profile_id}, req.body, {
+            const updated = req.body
+            if (req.file) {
+                if (profile.resume) {
+                    deleteFile(new mongoose.Types.ObjectId(profile.resume))
+                }
+                updated.resume = req.file.id
+            }
+            
+            profile = await Profile.findOneAndUpdate({_id: req.params.profile_id}, updated, {
                 new: true,
                 runValidators: true
             })
@@ -116,6 +142,9 @@ exports.deleteProfile = async(req, res)=> {
         if (profile.user_id != req.id) {
             res.status(400).send({ message: "Profile is not owned by this user!"});
             return;
+        }
+        if (profile.resume) {
+            deleteFile(new mongoose.Types.ObjectId(profile.resume))
         }
         await Profile.deleteOne({_id:req.params.profile_id})
         res.send({ message: "User profile was deleted successfully!" });
@@ -146,4 +175,46 @@ exports.searchProfiles = async(req, res)=> {
         res.status(500).send({ message: err });
         return;
     }
+}
+
+exports.deleteProfileResume = async (req, res) => {
+    try {
+        let profile = await Profile.find({user_id: req.id})
+        if(!profile){
+            res.status(400).send({message: "Profile does not exist!"});
+            return;
+        }
+        else {
+            profile = profile[0]
+            if (profile.resume) {
+                deleteFile(new mongoose.Types.ObjectId(profile.resume))
+            }
+            profile.resume = undefined
+            await profile.save()
+            res.json({profile})
+        }
+    }catch(err) {
+        res.status(500).send({ message: err });
+        return;
+    }
+}
+
+exports.getProfileResume = (req,res) => {
+    const id = new mongoose.Types.ObjectId(req.params.file_id)
+    gfs.find({_id: id}).toArray((err, files) => {
+        if (!files[0] || files.length === 0) {
+            return res.status(200).json({
+                success: false,
+                message: 'No files available',
+            });
+        }
+        if (files[0].contentType === 'application/pdf') {
+            // render image to browser
+            gfs.openDownloadStream(id).pipe(res);
+        } else {
+            res.status(404).json({
+                err: 'Not a pdf',
+            });
+        }
+    });
 }
