@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== 'production') {
 const app = express()
 
 var corsOptions = {
-  origin: "http://localhost:3101"
+  origin: "http://localhost:3000"
 };
 
 const indexRouter = require('./routes/index.js')
