@@ -35,6 +35,7 @@ exports.createProfile = (req, res) => {
                    const education = req.body.education ? JSON.parse(req.body.education) : undefined
                    const interestList = req.body.interests ? JSON.parse(req.body.interests) : undefined
                    const skillList = req.body.skills ? JSON.parse(req.body.skills) : undefined
+                   let projectIdArray = req.body.favorite_projects ? JSON.parse(req.body.favorite_projects).map(cur => new mongoose.Types.ObjectId(cur)) : undefined
                    const profile = new Profile({
                        user_id: req.id,
                        first_name: req.body.first_name,
@@ -46,6 +47,7 @@ exports.createProfile = (req, res) => {
                        bio: req.body.description,
                        skills: skillList,
                        interests: interestList,
+                       favorite_projects: projectIdArray,
                        created_at: new Date(Date.now()),
                        updated_at: new Date(Date.now()),
                        resume: (req.file ? req.file.id : undefined),
@@ -116,13 +118,27 @@ exports.updateProfile = async (req, res) => {
             return;
         }
         else {
-            const updated = req.body
+            let updated = req.body
             if (req.file) {
                 if (profile.resume) {
                     deleteFile(new mongoose.Types.ObjectId(profile.resume))
                 }
                 updated.resume = req.file.id
             }
+            if (req.body.favorite_projects) {
+                let projectArray = JSON.parse(req.body.favorite_projects)
+                console.log(projectArray.length)
+                if (projectArray.length > 20) {
+                    throw new Error("User has a max of 20 favorited projects.")
+                }
+                let projectIdArray = projectArray.map(cur => new mongoose.Types.ObjectId(cur))
+                updated.favorite_projects = projectIdArray
+            }
+            if (req.body.education) updated.education = JSON.parse(req.body.education);
+
+            if (req.body.interests) updated.interests = JSON.parse(req.body.interests);
+
+            if (req.body.skills) updated.skills = JSON.parse(req.body.skills);
             
             profile = await Profile.findOneAndUpdate({_id: req.params.profile_id}, updated, {
                 new: true,
@@ -131,7 +147,7 @@ exports.updateProfile = async (req, res) => {
             res.json({profile})
         }
     }catch(err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ message: `${err}` });
         return;
     }
 }

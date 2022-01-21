@@ -29,5 +29,8 @@ const profileSchema = new mongoose.Schema({
   created_at: { type: Date, required: true},
   updated_at: { type: Date, required: true },
   resume: { type: String},
+  favorite_projects: [{
+    type: mongoose.Schema.Types.ObjectID,
+    ref: 'Project'}]
 })
 module.exports = mongoose.model('Profile', profileSchema)
