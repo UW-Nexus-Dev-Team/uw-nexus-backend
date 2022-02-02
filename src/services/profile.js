@@ -102,7 +102,7 @@ exports.getAllProfiles = (req, res) => {
                 res.status(500).send({ message: err });
                 return;
             }
-            res.json({ profiles })
+            res.json(profiles)
         })
 }
 

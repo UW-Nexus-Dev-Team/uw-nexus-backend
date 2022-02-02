@@ -121,7 +121,7 @@ exports.getAllUsers = (req, res) => {
                 res.status(500).send({ message: err });
                 return;
             }
-            res.json({users})
+            res.json(users)
         })
 }
 

@@ -49,7 +49,7 @@ exports.getAllProjects = (req,res) => {
             return;
           }
 
-          res.json({ projects });
+          res.json(projects);
       });
 };
 //
