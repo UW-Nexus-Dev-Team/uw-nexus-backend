@@ -173,7 +173,15 @@ exports.deleteProfile = async(req, res)=> {
 
 exports.searchProfiles = async(req, res)=> {
     try {
-        query = {first_name: {$regex: new RegExp(req.body.search_term, "i")}}
+        query = {
+            "$expr": {
+                "$regexMatch": {
+                    "input": { "$concat": ["$first_name", " ", "$last_name"] },
+                    "regex": req.body.search_term,
+                    "options": "i"
+                }
+            }
+        }
         if(req.body.campus){query["education.campus"] = req.body.campus}
         if(req.body.year){query["education.year"] = req.body.year}
         if(req.body.major){query["education.major"] = req.body.major}
@@ -185,7 +193,7 @@ exports.searchProfiles = async(req, res)=> {
             res.status(500).send({ message: err });
             return;
           }
-          res.json({ profiles });
+          res.json(profiles);
         });
     }catch(err) {
         res.status(500).send({ message: err });

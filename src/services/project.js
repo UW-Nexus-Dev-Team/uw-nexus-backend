@@ -144,7 +144,7 @@ exports.searchProjects = async(req, res)=> {
             res.status(500).send({ message: err });
             return;
           }
-          res.json({ projects });
+          res.json(projects);
         });
     }catch(err) {
         res.status(500).send({ message: err });
