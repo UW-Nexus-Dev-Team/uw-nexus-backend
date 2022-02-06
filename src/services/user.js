@@ -31,6 +31,10 @@ exports.signIn = (req, res) => {
             expiresIn: 86400 // 24 hours
         });
 
+        res.cookie("accessToken", token, {
+            maxAge: 3.6e+6, // 24 hours
+            httpOnly: true,
+        });
         res.status(200).send({
             id: user._id,
             email: user.email,

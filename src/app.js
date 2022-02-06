@@ -15,6 +15,7 @@ const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
 const crypto = require("crypto");
 const path = require('path');
+const cookieParser = require('cookie-parser')
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -37,6 +38,7 @@ app.set('view engine','ejs')
 // app.use(expressLayouts)
 // app.use(express.static('public'))
 
+app.use(cookieParser())
 // parse requests of content-type - application/json
 app.use(cors(corsOptions));
 app.use(methodOverride('_method'));
