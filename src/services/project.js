@@ -66,7 +66,7 @@ exports.getAllProjects = (req,res) => {
 // };
 
 exports.getProjectbyId = (req,res) => {
-    Project.find({ _id: req.params.project_id })
+    Project.findOne({ _id: req.params.project_id })
            .exec((err, project) => {
           if (err) {
             res.status(500).send({ message: err });
