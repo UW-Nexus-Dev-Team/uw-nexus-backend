@@ -73,7 +73,7 @@ exports.getProjectbyId = (req,res) => {
             return;
           }
 
-          res.json({ project });
+          res.json(project);
       });
 };
 
@@ -84,7 +84,7 @@ exports.getProjectsOwned = (req,res) => {
             res.status(500).send({ message: err });
             return;
           }
-          res.json({ projects });
+          res.json(projects);
       });
 };
 
@@ -106,7 +106,7 @@ exports.updateProject = async (req, res) => {
                 new: true,
                 runValidators: true
             })
-            res.json({project})
+            res.json(project)
         }
     }catch(err) {
         res.status(500).send({ message: err });
