@@ -43,6 +43,14 @@ exports.signIn = (req, res) => {
   });
 };
 
+exports.signOut = (req, res) => {
+    res.cookie("accessToken", "", {
+        maxAge: 0,
+        httpOnly:true,
+    });
+    return res.send({success: true})
+}
+
 exports.resetPassword = (req, res) => {
   const user = User.findOne({ username: req.body.username });
 

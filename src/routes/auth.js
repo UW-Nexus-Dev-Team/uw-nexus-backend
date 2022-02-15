@@ -56,6 +56,8 @@ const { JWT_SECRET, FE_ADDR, DOMAIN } = require('../config/index.js');
     */
     app.post("/api/auth/signIn", UserService.signIn);
 
+    app.delete("/api/auth/signOut", UserService.signOut);
+
     /**
      * @api {get} /auth/password-reset Request password reset token by email
      * @apiDescription An email with a password reset link will be sent, if a user is registered with the email.
