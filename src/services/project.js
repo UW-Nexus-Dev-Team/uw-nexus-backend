@@ -18,7 +18,7 @@ exports.createProject = (req, res) => {
         title: req.body.title,
         owner_id: req.id,
         size: req.body.size,
-        team: [req.id],
+        team: [{user_id: req.id, role: "Project Owner"}],
         location: req.body.location,
         status: 'New',
         duration: {
@@ -117,7 +117,11 @@ exports.updateProject = async (req, res) => {
 exports.deleteProject = async(req, res)=> {
     try {
         let project = await Project.findById(req.params.project_id)
-        if (project._id != req.params.project_id) {
+        if(!project){
+            res.status(400).send({message: "Project does not exist!"});
+            return;
+        }
+        if (project.owner_id != req.id) {
             res.status(400).send({ message: "Project is not owned by this user!"});
             return;
         }

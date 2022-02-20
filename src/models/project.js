@@ -12,8 +12,9 @@ const projectSchema = new mongoose.Schema({
         enum:['Small','Medium','Large']
       },
       team: [{
-        type: mongoose.Schema.Types.ObjectID,
-        ref: 'User'
+        user_id: {type: mongoose.Schema.Types.ObjectID,
+          ref: 'User'},
+        role: {type: String}
       }],
       location: { type: String, required: true },
       status: {
