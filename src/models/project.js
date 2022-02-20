@@ -46,7 +46,13 @@ const projectSchema = new mongoose.Schema({
         coding_skills: [{
           type: String,
           enum: constants.CODING_SKILLS}],
-        responsibilities: [{ type: String}]
+        responsibilities: [{ type: String}],
+        application_link: {type: String},
+        role_duration: {
+          type: String,
+          enum:['1-3 months','3-6 months','6-9 months', 'More than 9 months']
+        },
+        private: {type: Boolean}
       }]
 })
 
