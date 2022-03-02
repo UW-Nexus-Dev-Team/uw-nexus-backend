@@ -234,7 +234,13 @@ exports.getProfileResume = (req,res) => {
         }
         if (files[0].contentType === 'application/pdf') {
             // render image to browser
-            gfs.openDownloadStream(id).pipe(res);
+            // gfs.openDownloadStream(id).pipe(res);
+            // send a base64 pdf for React to render
+            // https://stackoverflow.com/questions/47530471/gridfs-how-to-display-the-result-of-readstream-piperes-in-an-img-tag
+            // https://stackoverflow.com/questions/49098850/loading-pdf-from-base64-data-using-react-pdf-js
+            gfs.openDownloadStream(id).on('data', (chunk)=> {
+                res.send({ pdf: chunk.toString('base64') });
+            })
         } else {
             res.status(404).json({
                 err: 'Not a pdf',

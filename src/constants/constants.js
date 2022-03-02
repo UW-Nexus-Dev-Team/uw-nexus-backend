@@ -52,3 +52,8 @@ exports.MAJORS =
     'Oceanography', 'Informatics', 'Medical Laboratory Science', 'Nursing', 'Environmental Health', 
     'Food Systems, Nutrition, & Health', 'Public Health', 'Social Welfare'
 ];
+
+exports.ROLES_TYPES = 
+[
+    'Software Developer','UX Designer','Data Scientist','Project Manager', 'Other'
+];

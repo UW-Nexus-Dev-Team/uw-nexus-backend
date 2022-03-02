@@ -135,12 +135,15 @@ exports.deleteProject = async(req, res)=> {
 
 exports.searchProjects = async(req, res)=> {
     try {
-        query = { title: {$regex: new RegExp(req.body.search_term, "i")}}
+        queryTitle = { title: {$regex: new RegExp(req.body.search_term, "i")}}
+        queryRoles = { "roles.title": {$regex: new RegExp(req.body.search_term, "i")}}
+        query = { $or: [ queryTitle, queryRoles ] }
+
         if(req.body.size) {query["size"] = req.body.size}
         if(req.body.status) {query["status"] = req.body.status}
         if(req.body.duration) {query["duration"] = req.body.duration}
         if(req.body.categories){query["categories"] = req.body.categories}
-        if(req.body.role_titles){query["roles.title"] = req.body.role_titles}
+        if(req.body.role_titles){query["roles.type"] = req.body.role_type}
 
         Project.find(query)
            .exec((err, projects) => {

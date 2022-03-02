@@ -21,10 +21,11 @@ exports.signIn = (req, res) => {
         );
 
         if (!passwordIsValid) {
-        return res.status(401).send({
-            accessToken: null,
-            message: "Invalid Password!"
+            res.status(401).send({
+                accessToken: null,
+                message: "Invalid Password!"
             });
+            return
         }
 
         var token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
@@ -161,7 +162,6 @@ exports.updateUser = async (req, res) => {
     }
 }
 
-// deal with the profiles and etc
 exports.deleteUser = async(req, res)=> {
     try {
         if (user.id != req.id) {
@@ -169,6 +169,7 @@ exports.deleteUser = async(req, res)=> {
             return;
         }
         await User.deleteOne({_id:req.params.id})
+        await Profile.deleteOne({user_id:req.params.id})
         res.send({ message: "User was deleted successfully!" });
         
     }catch(err) {
