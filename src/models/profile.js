@@ -28,7 +28,7 @@ const profileSchema = new mongoose.Schema({
   bio: { type: String },
   created_at: { type: Date, required: true},
   updated_at: { type: Date, required: true },
-  resume: { type: String},
+  resume_file_id: { type: String},
   favorite_projects: [{
     type: mongoose.Schema.Types.ObjectID,
     ref: 'Project'}]

@@ -127,17 +127,6 @@ exports.getUser = (req, res) => {
         })
 }
 
-exports.getAllUsers = (req, res) => {
-    User.find({ }).select("-password")
-        .exec((err,users) => {
-            if (err) {
-                res.status(500).send({ message: err });
-                return;
-            }
-            res.json(users)
-        })
-}
-
 exports.updateUser = async (req, res) => {
     try {
         let user = await User.findById(req.params.id)

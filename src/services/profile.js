@@ -50,7 +50,7 @@ exports.createProfile = (req, res) => {
                        favorite_projects: projectIdArray,
                        created_at: new Date(Date.now()),
                        updated_at: new Date(Date.now()),
-                       resume: (req.file ? req.file.id : undefined),
+                       resume_file_id: (req.file ? req.file.id : undefined),
                    });
                    profile.save((err1, profile) => {
                        if (err1) {
@@ -120,10 +120,10 @@ exports.updateProfile = async (req, res) => {
         else {
             let updated = req.body
             if (req.file) {
-                if (profile.resume) {
-                    deleteFile(new mongoose.Types.ObjectId(profile.resume))
+                if (profile.resume_file_id) {
+                    deleteFile(new mongoose.Types.ObjectId(profile.resume_file_id))
                 }
-                updated.resume = req.file.id
+                updated.resume_file_id = req.file.id
             }
             if (req.body.favorite_projects) {
                 let projectArray = JSON.parse(req.body.favorite_projects)
@@ -159,8 +159,8 @@ exports.deleteProfile = async(req, res)=> {
             res.status(400).send({ message: "Profile is not owned by this user!"});
             return;
         }
-        if (profile.resume) {
-            deleteFile(new mongoose.Types.ObjectId(profile.resume))
+        if (profile.resume_file_id) {
+            deleteFile(new mongoose.Types.ObjectId(profile.resume_file_id))
         }
         await Profile.deleteOne({_id:req.params.profile_id})
         res.send({ message: "User profile was deleted successfully!" });
@@ -210,10 +210,10 @@ exports.deleteProfileResume = async (req, res) => {
         }
         else {
             profile = profile[0]
-            if (profile.resume) {
-                deleteFile(new mongoose.Types.ObjectId(profile.resume))
+            if (profile.resume_file_id) {
+                deleteFile(new mongoose.Types.ObjectId(profile.resume_file_id))
             }
-            profile.resume = undefined
+            profile.resume_file_id = undefined
             await profile.save()
             res.json({profile})
         }
