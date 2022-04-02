@@ -36,7 +36,7 @@ const projectSchema = new mongoose.Schema({
       coding_skills: [{
           type: String,
           enum: constants.CODING_SKILLS}],
-      interest:  [{
+      interests:  [{
         type: String,
         enum: constants.INTERESTS}],
       roles:  [{

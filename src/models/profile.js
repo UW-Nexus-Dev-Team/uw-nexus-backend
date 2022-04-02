@@ -31,6 +31,7 @@ const profileSchema = new mongoose.Schema({
   resume_file_id: { type: String},
   favorite_projects: [{
     type: mongoose.Schema.Types.ObjectID,
-    ref: 'Project'}]
+    ref: 'Project'}],
+  private: {type: Boolean}
 })
 module.exports = mongoose.model('Profile', profileSchema)

@@ -1,21 +1,13 @@
 const express = require('express')
-const expressLayouts = require('express-ejs-layouts')
-const config = require('dotenv'); // .env file
-const bcrypt = require('bcryptjs');
-// single database connection shared to all routes
-// other routes can access using getDb
-// const initDb = require("./db/db.js").initDb
-// const getDb = require("./db/db.js").getDb
-const bodyParser = require("body-parser")
 const cors = require("cors");
 
 const multer = require('multer');
 const {GridFsStorage} = require('multer-gridfs-storage');
-const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
 const crypto = require("crypto");
 const path = require('path');
 const cookieParser = require('cookie-parser')
+const { authJwt } = require("./middlewares");
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -28,31 +20,22 @@ var corsOptions = {
   origin: "http://localhost:3000"
 };
 
-const indexRouter = require('./routes/index.js')
-// const projectsRouter = require('./routes/projects.js')
-
-
 app.set('view engine','ejs')
-// app.set('views', __dirname + '/views')
-// app.set('layout','layouts/layout')
-// app.use(expressLayouts)
-// app.use(express.static('public'))
-
 app.use(cookieParser())
+
 // parse requests of content-type - application/json
 app.use(cors(corsOptions));
 app.use(methodOverride('_method'));
+
 // possible fix the CORS issue - Ajay's
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin','*');
   next()
 });
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(express.urlencoded({extended: true}));
 app.use(express.json()) 
+app.use(authJwt)
 
 
 app.get("/", (req, res) => {
@@ -64,13 +47,6 @@ const PORT = process.env.PORT || 3100;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
-
-// const conn = db.mongoose.createConnection(process.env.MONGODB_URI,
-//   {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-//   });
-//
 
 const mongoURI = process.env.MONGODB_URI
 const mongoose = require('mongoose');

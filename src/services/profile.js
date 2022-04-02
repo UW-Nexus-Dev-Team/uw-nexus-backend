@@ -1,7 +1,5 @@
 const config = require('../config/index.js');
-const User = require('../models/user.js')
 const Profile = require('../models/profile.js');
-const upload  = require("../app.js");
 const mongoose = require('mongoose');
 
 // SET UP GRIDFS CONNECTION
@@ -14,19 +12,15 @@ connect.once('open', () => {
     });
 });
 
-const deleteFile = (id) => {
-    if (!id || id === 'undefined') return res.status(400).send('no file id');
-    const _id = new mongoose.Types.ObjectId(id);
-    gfs.delete(_id, (err) => {
-      if (err) return res.status(500).send('file deletion error');
-    });
-};
-
 exports.createProfile = (req, res) => {
+    if (!req.id) {
+        res.status(401).send({message: "User is not signed in."});
+        return;
+    }
     Profile.findOne({ user_id: req.id })
            .exec((err, profile) => {
                if (err) {
-                   res.status(500).send({ message: err });
+                   res.status(500).send({ message: err.message });
                    return;
                } else if (profile) {
                    res.status(400).send({message: "Profile already exists"});
@@ -51,6 +45,7 @@ exports.createProfile = (req, res) => {
                        created_at: new Date(Date.now()),
                        updated_at: new Date(Date.now()),
                        resume_file_id: (req.file ? req.file.id : undefined),
+                       private: (req.body.private ? req.body.private : true)
                    });
                    profile.save((err1, profile) => {
                        if (err1) {
@@ -69,13 +64,17 @@ exports.getProfile = (req, res) => {
     Profile.findById(req.params.profile_id)
         .exec((err,profile) => {
             if (err) {
-                res.status(500).send({ message: err });
+                res.status(500).send({ message: err.message });
                 return;
             } else if (!profile) {
                 res.status(400).send({message: "Profile does not exist!"});
                 return;
             } else {
-                res.json({profile})
+                if (profile.private && profile.user_id != req.id) {
+                    res.status(401).send({message: "User does not have access to view Profile."});
+                    return;
+                }
+                res.json(profile)
             }
         })
 }
@@ -84,13 +83,17 @@ exports.getUserProfile = (req, res) => {
     Profile.find({user_id: req.params.user_id})
         .exec((err,profile) => {
             if (err) {
-                res.status(500).send({ message: err });
+                res.status(500).send({ message: err.message });
                 return;
             } else if (!profile) {
                 res.status(400).send({message: "Profile does not exist!"});
                 return;
             } else {
-                res.json({profile})
+                if (profile.private && profile.user_id != req.id) {
+                    res.status(401).send({message: "User does not have access to view Profile."});
+                    return;
+                }
+                res.json(profile)
             }
         })
 }
@@ -99,14 +102,19 @@ exports.getAllProfiles = (req, res) => {
     Profile.find({ })
         .exec((err,profiles) => {
             if (err) {
-                res.status(500).send({ message: err });
+                res.status(500).send({ message: err.message });
                 return;
             }
+            profiles = profiles.filter(profile => !profile.private)
             res.json(profiles)
         })
 }
 
 exports.updateProfile = async (req, res) => {
+    if (!req.id) {
+        res.status(401).send({message: "User is not signed in."});
+        return;
+    }
     try {
         let profile = await Profile.findById(req.params.profile_id)
         if(!profile){
@@ -114,6 +122,7 @@ exports.updateProfile = async (req, res) => {
             return;
         }
         if (profile.user_id != req.id) {
+            console.log(profile.user_id, req.id)
             res.status(400).send({ message: "Profile is not owned by this user!"});
             return;
         }
@@ -153,6 +162,10 @@ exports.updateProfile = async (req, res) => {
 }
 
 exports.deleteProfile = async(req, res)=> {
+    if (!req.id) {
+        res.status(401).send({message: "User is not signed in."});
+        return;
+    }
     try {
         let profile = await Profile.findById(req.params.profile_id)
         if (profile.user_id != req.id) {
@@ -166,7 +179,7 @@ exports.deleteProfile = async(req, res)=> {
         res.send({ message: "User profile was deleted successfully!" });
         
     }catch(err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ message: err.message });
         return;
     }
 }
@@ -190,18 +203,23 @@ exports.searchProfiles = async(req, res)=> {
         Profile.find(query)
            .exec((err, profiles) => {
           if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).send({ message: err.message });
             return;
           }
+          profiles = profiles.filter(profile => !profile.private)
           res.json(profiles);
         });
     }catch(err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ message: err.message });
         return;
     }
 }
 
 exports.deleteProfileResume = async (req, res) => {
+    if (!req.id) {
+        res.status(401).send({message: "User is not signed in."});
+        return;
+    }
     try {
         let profile = await Profile.find({user_id: req.id})
         if(!profile){
@@ -218,7 +236,7 @@ exports.deleteProfileResume = async (req, res) => {
             res.json({profile})
         }
     }catch(err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ message: err.message });
         return;
     }
 }
@@ -248,3 +266,12 @@ exports.getProfileResume = (req,res) => {
         }
     });
 }
+
+// HELPER FUNCTIONS
+const deleteFile = (id) => {
+    if (!id || id === 'undefined') return res.status(400).send('no file id');
+    const _id = new mongoose.Types.ObjectId(id);
+    gfs.delete(_id, (err) => {
+      if (err) return res.status(500).send('file deletion error');
+    });
+};

@@ -1,6 +1,5 @@
 const config = require('../config/index.js');
 const User = require('../models/user.js');
-const mailer = require('./mailer/index.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -8,7 +7,7 @@ exports.signIn = (req, res) => {
     User.findOne({ email: req.body.email })
         .exec((err, user) => {
         if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).send({ message: err.message });
             return;
         }
         if (!user) {
@@ -52,71 +51,30 @@ exports.signOut = (req, res) => {
     return res.send({success: true})
 }
 
-exports.resetPassword = (req, res) => {
-  const user = User.findOne({ username: req.body.username });
-
-  if (req.body.password) {
-      req.body.password = bcrypt.hashSync(req.body.password, 10);
-  }
-
-  Object.assign(user, req.body);
-
-  user.save((err, user) => {
-      if (err) {
-          res.status(500).send({ message: err });
-          return;
-      }
-      res.send({ message: "User was updated successfully!" });
-  });
-}
-
-// async function getById(id) {
-//     return await User.findById(id);
-// }
-
-// async function requestPasswordReset(req, res) {
-//   const { email } = req.query;
-//   const user = User.findOne({ email: req.body.email });
-//   console.log(`${user.email}`);
-//   var token = jwt.sign({ username: user.username }, config.JWT_SECRET, { expiresIn: 86400 });
-//   let msg = await mailer.sendPasswordResetIntru(email, token);
-//   res.send('Email sent for user `${user.username}`, msg id is %s', msg.messageID);
-//
-//   if (err) {
-//     res.status(500).send({ message: err });
-//     return;
-//   }
-// };
-
-// exports.requestPasswordReset = requestPasswordReset;
-
 exports.createUser = (req, res) => {
     const user = new User({
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 10),
-        firstName: req.body.firstName,
-        lastName: req.body.lastName
+        first_name: req.body.first_name,
+        last_name: req.body.last_name
     });
 
     // save user
     user.save((err, user) => {
         if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).send({ message: err.message });
             return;
         }
         res.send({ message: "User was registered successfully!" });
     })
 };
 
-// user id?
-// Figure out how to do with these
-// exclude pass normally -- https://stackoverflow.com/questions/12096262/how-to-protect-the-password-field-in-mongoose-mongodb-so-it-wont-return-in-a-qu
-// log out user?
+// The rest aren't necessary as of now, but may be turned into endpoints later on (03/31/22)
 exports.getUser = (req, res) => {
     User.findOne({user_id: req.params.user_id}).select("-password")
         .exec((err,user) => {
             if (err) {
-                res.status(500).send({ message: err });
+                res.status(500).send({ message: err.message });
                 return;
             } else if (!user) {
                 res.status(400).send({message: "User does not exist!"});
@@ -146,7 +104,7 @@ exports.updateUser = async (req, res) => {
             res.json({user})
         }
     }catch(err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ message: err.message });
         return;
     }
 }
@@ -162,39 +120,7 @@ exports.deleteUser = async(req, res)=> {
         res.send({ message: "User was deleted successfully!" });
         
     }catch(err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ message: err.message });
         return;
     }
 }
-
-
-// exports.update = (req, res) => {
-//     const user = await User.findById(id);
-//
-//     // validate
-//     if (!user) throw 'User not found';
-//     // if (user.username !== req.body.username
-//     //     && await User.findOne({ username: req.body.username })) {
-//     //     throw 'Username "' + req.body.username + '" is already taken';
-//     // }
-//
-//     // hash password if it was entered
-//     if (req.body.password) {
-//         userParam.hash = bcrypt.hashSync(userParam.password, 10);
-//     }
-//
-//     // copy userParam properties to user
-//     Object.assign(user, userParam);
-//
-//     user.save((err, user) => {
-//         if (err) {
-//             res.status(500).send({ message: err });
-//             return;
-//         }
-//         res.send({ message: "User was updated successfully!" });
-//     }
-// }
-
-// exports._delete(id) {
-//     await User.findByIdAndRemove(id);
-// }
