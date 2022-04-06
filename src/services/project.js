@@ -1,5 +1,8 @@
 const Project = require('../models/project.js')
 
+let userPopulateQuery = [{path:'owner_id', select:['first_name','last_name']},
+    {path:'team.user_id', select:['first_name','last_name']}]
+
 exports.createProject = (req, res) => {
     if (!req.id) {
         res.status(401).send({message: "User is not signed in."});
@@ -33,25 +36,23 @@ exports.createProject = (req, res) => {
 }
 
 exports.getAllProjects = (req,res) => {
-    Project.find({ })
+    Project.find({ }).populate(userPopulateQuery)
            .exec((err, projects) => {
           if (err) {
             res.status(500).send({ message: err.message });
             return;
           }
-
           res.json(filterProjects(req.id, projects));
       });
 };
 
 exports.getProjectbyId = (req,res) => {
-    Project.findOne({ _id: req.params.project_id })
+    Project.findOne({ _id: req.params.project_id }).populate(userPopulateQuery)
         .exec((err, project) => {
           if (err) {
             res.status(500).send({ message: err.message });
             return;
           }
-          console.log(project.team)
           res.json(filterProjects(req.id, [project])[0]);
       });
 };
@@ -61,7 +62,7 @@ exports.getProjectsOwned = (req,res) => {
         res.status(401).send({message: "User is not signed in."});
         return;
     }
-    Project.find({ owner_id: req.id })
+    Project.find({ owner_id: req.id }).populate(userPopulateQuery)
            .exec((err, projects) => {
           if (err) {
             res.status(500).send({ message: err.message });
@@ -135,7 +136,7 @@ exports.searchProjects = async(req, res)=> {
         if(req.body.categories){query["categories"] = req.body.categories}
         if(req.body.role_types){query["roles.type"] = req.body.role_types}
 
-        Project.find(query)
+        Project.find(query).populate(userPopulateQuery)
            .exec((err, projects) => {
           if (err) {
             res.status(500).send({ message: err.message });
@@ -153,7 +154,7 @@ exports.searchProjects = async(req, res)=> {
 function filterProjects(userId, projects) {
     let filteredProjects = []
     projects.forEach(project => {
-        if (!userId || !project.team.some(user => user.user_id == userId)) {
+        if (!userId || !project.team.some(user => user.user_id && user.user_id._id == userId)) {
             project.team = undefined
             project.roles = project.roles.filter(role => !role.private)
         }

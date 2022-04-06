@@ -61,7 +61,7 @@ exports.createProfile = (req, res) => {
 }
 
 exports.getProfile = (req, res) => {
-    Profile.findById(req.params.profile_id)
+    Profile.findById(req.params.profile_id).populate('favorite_projects', 'title')
         .exec((err,profile) => {
             if (err) {
                 res.status(500).send({ message: err.message });
@@ -80,7 +80,7 @@ exports.getProfile = (req, res) => {
 }
 
 exports.getUserProfile = (req, res) => {
-    Profile.find({user_id: req.params.user_id})
+    Profile.find({user_id: req.params.user_id}).populate('favorite_projects', 'title')
         .exec((err,profile) => {
             if (err) {
                 res.status(500).send({ message: err.message });
@@ -99,7 +99,7 @@ exports.getUserProfile = (req, res) => {
 }
 
 exports.getAllProfiles = (req, res) => {
-    Profile.find({ })
+    Profile.find({ }).populate('favorite_projects', 'title')
         .exec((err,profiles) => {
             if (err) {
                 res.status(500).send({ message: err.message });
@@ -200,7 +200,7 @@ exports.searchProfiles = async(req, res)=> {
         if(req.body.major){query["education.major"] = req.body.major}
         if(req.body.skills){query["education.skills"] = req.body.skills}
         if(req.body.interests){query["education.interests"] = req.body.interests}
-        Profile.find(query)
+        Profile.find(query).populate('favorite_projects', 'title')
            .exec((err, profiles) => {
           if (err) {
             res.status(500).send({ message: err.message });
