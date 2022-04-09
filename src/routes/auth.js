@@ -4,7 +4,6 @@ const passport = require('passport');
 // import jwt from 'jsonwebtoken';
 const { verifyInfo } = require("../middlewares");
 const UserService = require('../services/user.js');
-const { JWT_SECRET, FE_ADDR, DOMAIN } = require('../config/index.js');
 
 
 /**

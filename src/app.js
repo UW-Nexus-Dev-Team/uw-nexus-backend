@@ -8,16 +8,12 @@ const crypto = require("crypto");
 const path = require('path');
 const cookieParser = require('cookie-parser')
 const { authJwt } = require("./middlewares");
-
-
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config()
-}
+const config = require('./config/index.js');
 
 const app = express()
-
+console.log(config.FE_ADDR)
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: config.FE_ADDR
 };
 
 app.set('view engine','ejs')
@@ -43,12 +39,12 @@ app.get("/", (req, res) => {
 });
 
 // set port, listen for requests
-const PORT = process.env.PORT || 3100;
+const PORT = config.PORT || 3100;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-const mongoURI = process.env.MONGODB_URI
+const mongoURI = config.MONGODB_URI
 const mongoose = require('mongoose');
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,

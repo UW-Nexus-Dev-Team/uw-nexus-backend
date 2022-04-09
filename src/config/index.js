@@ -1,34 +1,18 @@
-// const config = require('dotenv')
 require('dotenv').config();
 
-process.env.NODE_ENV = 'development'; // process.env.NODE_ENV || 'development'
-// if (process.env.NODE_ENV !== 'production') {
-//
-// }
-
-// const { error } = config();
-// if (error) {
-//   throw new Error('⚠️  .env file not found  ⚠️');
-// }
-
-exports.MONGODB_URI = process.env.MONGODB_URI;
-// exports.MONGODB_CONNECT = {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true
-// };
-
-exports.DOMAIN = 'localhost'; // process.env.DOMAIN || 'localhost'
-exports.FE_ADDR = 'http://localhost:3000'; // process.env.FE_ADDR || 'http://localhost:3000'
-exports.BE_ADDR = 'http://localhost:3100'; // process.env.BE_ADDR || 'http://localhost:3100'
-
-// exports.PORT = parseInt(process.env.PORT) || 3100;
-//
-// exports.DB_PORT = parseInt(process.env.DB_PORT) || 3306;
-// exports.DB_HOST = process.env.DB_HOST || 'localhost';
-// exports.DB_SOCKET = process.env.DB_SOCKET || null;
-// exports.DB_USER= process.env.DB_USER || 'root';
-// exports.DB_PASS= process.env.DB_PASS || 'pass';
-// exports.DB_NAME= process.env.DB_NAME || 'nexus';
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+if (process.env.NODE_ENV === 'development') {
+    console.log("Server in development mode.")
+    exports.MONGODB_URI = process.env.MONGODB_URI;
+    exports.FE_ADDR = 'http://localhost:3000';
+    exports.BE_ADDR = 'http://localhost:3100';
+}
+if (process.env.NODE_ENV === 'production') {
+    console.log("Server in production mode.")
+    exports.MONGODB_URI = process.env.MONGODB_URI_PROD;
+    exports.FE_ADDR = process.env.FE_ADDR
+    exports.BE_ADDR =  process.env.BE_ADDR
+}
 
 exports.JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret';
 
