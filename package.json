@@ -5,7 +5,6 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon",
     "prod": "NODE_ENV=production node src/app.js"
   },
   "repository": {
