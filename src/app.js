@@ -11,7 +11,7 @@ const { authJwt } = require("./middlewares");
 const config = require('./config/index.js');
 
 const app = express()
-console.log(config.FE_ADDR)
+
 var corsOptions = {
   origin: config.FE_ADDR
 };
