@@ -40,6 +40,11 @@ module.exports = function(app) {
   );
 
   app.get(
+    "/api/project/search",
+    ProjectService.searchProjects
+  );
+
+  app.get(
       "/api/project/:project_id",
       ProjectService.getProjectbyId
   );
@@ -49,13 +54,9 @@ module.exports = function(app) {
   ProjectService.updateProject
   );
 
-  app.post(
+  app.delete(
   "/api/project/delete/:project_id",
   ProjectService.deleteProject
   );
 
-  app.post(
-  "/api/project/search",
-  ProjectService.searchProjects
-  );
 };

@@ -48,6 +48,11 @@ app.get("/api/profile/allProfiles",
   );
 
 app.get(
+    "/api/profile/search",
+    ProfileService.searchProfiles
+  );
+
+app.get(
     "/api/profile/user/:user_id",
     ProfileService.getUserProfile
   );
@@ -63,14 +68,9 @@ app.post(
     ProfileService.updateProfile
   );
 
-app.post(
+app.delete(
     "/api/profile/delete/:profile_id",
     ProfileService.deleteProfile
-  );
-
-app.post(
-    "/api/profile/search",
-    ProfileService.searchProfiles
   );
 
 app.post(

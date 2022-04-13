@@ -190,16 +190,16 @@ exports.searchProfiles = async(req, res)=> {
             "$expr": {
                 "$regexMatch": {
                     "input": { "$concat": ["$first_name", " ", "$last_name"] },
-                    "regex": req.body.search_term,
+                    "regex": req.query.search_term,
                     "options": "i"
                 }
             }
         }
-        if(req.body.campus){query["education.campus"] = req.body.campus}
-        if(req.body.year){query["education.year"] = req.body.year}
-        if(req.body.major){query["education.major"] = req.body.major}
-        if(req.body.skills){query["education.skills"] = req.body.skills}
-        if(req.body.interests){query["education.interests"] = req.body.interests}
+        if(req.query.campus){query["education.campus"] = req.query.campus}
+        if(req.query.year){query["education.year"] = req.query.year}
+        if(req.query.major){query["education.major"] = req.query.major}
+        if(req.query.skills){query["education.skills"] = req.query.skills}
+        if(req.query.interests){query["education.interests"] = req.query.interests}
         Profile.find(query).populate('favorite_projects', 'title')
            .exec((err, profiles) => {
           if (err) {

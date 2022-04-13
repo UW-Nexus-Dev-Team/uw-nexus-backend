@@ -126,15 +126,15 @@ exports.deleteProject = async(req, res)=> {
 
 exports.searchProjects = async(req, res)=> {
     try {
-        queryTitle = { title: {$regex: new RegExp(req.body.search_term, "i")}}
-        queryRoleTitle = { "roles.title": {$regex: new RegExp(req.body.search_term, "i")}}
+        queryTitle = { title: {$regex: new RegExp(req.query.search_term, "i")}}
+        queryRoleTitle = { "roles.title": {$regex: new RegExp(req.query.search_term, "i")}}
         query = { $or: [ queryTitle, queryRoleTitle ] }
 
-        if(req.body.size) {query["size"] = req.body.size}
-        if(req.body.status) {query["status"] = req.body.status}
-        if(req.body.duration) {query["duration"] = req.body.duration}
-        if(req.body.categories){query["categories"] = req.body.categories}
-        if(req.body.role_types){query["roles.type"] = req.body.role_types}
+        if(req.query.size) {query["size"] = req.query.size}
+        if(req.query.status) {query["status"] = req.query.status}
+        if(req.query.duration) {query["duration"] = req.query.duration}
+        if(req.query.categories){query["categories"] = req.query.categories}
+        if(req.query.role_types){query["roles.type"] = req.query.role_types}
 
         Project.find(query).populate(userPopulateQuery)
            .exec((err, projects) => {
