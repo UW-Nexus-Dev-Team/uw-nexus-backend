@@ -1,4 +1,5 @@
 # NEXUS Backend Documentation
+> For more information: https://docs.google.com/document/d/1m1Z3_QX1r0cL__jlKDm_5dZ7Y0-AVCoxTGaJM2EwmYU/edit
 ## Running the Backend Locally
 ### Initial Setup & .env file
 1. Clone the repository:
