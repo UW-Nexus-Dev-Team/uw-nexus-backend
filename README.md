@@ -1,6 +1,26 @@
-# uw-nexus-backend
-
-#TO DO: Take out all unnecessary commented lines and files. Create more documentation for everything.
-
-1) 'npm install' to get all dependencies.
-2) 'nodemon start' to run local server, which updates upon save.
+# NEXUS Backend Documentation
+## Running the Backend Locally
+### Initial Setup & .env file
+1. Clone the repository:
+```
+git clone https://github.com/UW-Nexus-Dev-Team/uw-nexus-backend.git
+```
+2. Install all dependencies: 
+```
+npm install
+```
+3. Create a .env file in the main directory
+```
+touch .env
+```
+4. Copy .env file contents from the NEXUS shared google drive and paste it into the newly created .env file
+- https://drive.google.com/file/d/1VNscx-Ef5_yzZKC_vDFWiR_O62XJi1-c/view?usp=sharing
+### Standard Use:
+1. Run the server: 
+```
+npm run start
+```
+2. Or, run the server with updates upon save: 
+```
+nodemon start
+```
