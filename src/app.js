@@ -13,7 +13,8 @@ const config = require('./config/index.js');
 const app = express()
 
 var corsOptions = {
-  origin: config.FE_ADDR
+  origin: config.FE_ADDR,
+  credentials: true,
 };
 
 app.set('view engine','ejs')
@@ -25,7 +26,7 @@ app.use(methodOverride('_method'));
 
 // possible fix the CORS issue - Ajay's
 app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin','*');
+  // res.setHeader('Access-Control-Allow-Origin','*');
   next()
 });
 

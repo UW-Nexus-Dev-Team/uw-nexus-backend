@@ -122,7 +122,6 @@ exports.updateProfile = async (req, res) => {
             return;
         }
         if (profile.user_id != req.id) {
-            console.log(profile.user_id, req.id)
             res.status(400).send({ message: "Profile is not owned by this user!"});
             return;
         }
