@@ -241,6 +241,7 @@ exports.deleteProfileResume = async (req, res) => {
 }
 
 exports.getProfileResume = (req,res) => {
+    console.log("getting profile resume!");
     const id = new mongoose.Types.ObjectId(req.params.file_id)
     gfs.find({_id: id}).toArray((err, files) => {
         if (!files[0] || files.length === 0) {
@@ -250,16 +251,21 @@ exports.getProfileResume = (req,res) => {
             });
         }
         if (files[0].contentType === 'application/pdf') {
+            console.log(files[0]);
             // render image to browser
             // gfs.openDownloadStream(id).pipe(res);
             // send a base64 pdf for React to render
             // https://stackoverflow.com/questions/47530471/gridfs-how-to-display-the-result-of-readstream-piperes-in-an-img-tag
             // https://stackoverflow.com/questions/49098850/loading-pdf-from-base64-data-using-react-pdf-js
-            gfs.openDownloadStream(id).on('data', (chunk)=> {
-                res.send({ pdf: chunk.toString('base64') });
+            let base64res = "";
+            const downloadStream = gfs.openDownloadStream(id).on('data', (chunk)=> {
+                // res.write(chunk.toString('base64'))
+                base64res += chunk.toString('base64')
+            }).on('end', () => {
+                res.status(200).send({pdf: base64res})
             })
         } else {
-            res.status(404).json({
+            return res.status(404).json({
                 err: 'Not a pdf',
             });
         }
