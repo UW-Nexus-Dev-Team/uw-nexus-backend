@@ -24,6 +24,8 @@ app.use(cookieParser())
 app.use(cors(corsOptions));
 app.use(methodOverride('_method'));
 
+app.set("trust proxy", 1); 
+
 // possible fix the CORS issue - Ajay's
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Methods",  "GET, POST, PUT, DELETE");
