@@ -26,7 +26,7 @@ app.use(methodOverride('_method'));
 
 // possible fix the CORS issue - Ajay's
 app.use(function (req, res, next) {
-  // res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader("Access-Control-Allow-Methods",  "GET, POST, PUT, DELETE");
   next()
 });
 
