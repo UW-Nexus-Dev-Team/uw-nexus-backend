@@ -7,6 +7,7 @@ const projectSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectID,
         ref: 'User'
       },
+      owner_email: { type: String },
       size: {
         type: String,
         enum:['Small','Medium','Large']

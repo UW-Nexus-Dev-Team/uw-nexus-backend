@@ -11,6 +11,7 @@ exports.createProject = (req, res) => {
     const project = new Project({
         title: req.body.title,
         owner_id: req.id,
+        owner_email: req.body.owner_email,
         size: req.body.size,
         team: [{user_id: req.id, role: "Project Owner"}],
         location: req.body.location,

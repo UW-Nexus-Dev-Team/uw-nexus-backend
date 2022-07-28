@@ -34,6 +34,7 @@ exports.createProfile = (req, res) => {
                        user_id: req.id,
                        first_name: req.body.first_name,
                        last_name: req.body.last_name,
+                       email: req.body.email,
                        education: {
                            campus: education.campus,
                            year: education.year,
