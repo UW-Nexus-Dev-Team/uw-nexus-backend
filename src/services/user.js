@@ -35,7 +35,7 @@ exports.signIn = (req, res) => {
             maxAge: 3.6e+6, // 24 hours
             httpOnly: true,
             sameSite: 'none',
-            secure: false,
+            secure: true,
         });
         res.status(200).send({
             id: user._id,
