@@ -33,7 +33,6 @@ exports.signIn = (req, res) => {
 
         res.cookie("accessToken", token, {
             maxAge: 3.6e+6, // 24 hours
-            httpOnly: true,
             sameSite: 'none',
             secure: true,
         });
