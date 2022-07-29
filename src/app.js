@@ -29,6 +29,9 @@ app.set("trust proxy", 1);
 // possible fix the CORS issue - Ajay's
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Methods",  "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Origin", config.FE_ADDR);
+  res.setHeader("Access-Control-Allow-Headers", "Accept,Accept-Language,Content-Language,Content-Type,Authorization,Cookie,X-Requested-With,Origin,Host");
   next()
 });
 
