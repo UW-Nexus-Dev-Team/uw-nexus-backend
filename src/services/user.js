@@ -33,8 +33,8 @@ exports.signIn = (req, res) => {
 
         res.cookie("accessToken", token, {
             maxAge: 3.6e+6, // 24 hours
-            sameSite: 'none',
-            secure: true,
+            sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === "production",
         });
         res.status(200).send({
             id: user._id,
