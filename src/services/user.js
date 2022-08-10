@@ -35,6 +35,7 @@ exports.signIn = (req, res) => {
             maxAge: 3.6e+6, // 24 hours
             sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
             secure: process.env.NODE_ENV === "production",
+            httpOnly: true
         });
         res.status(200).send({
             id: user._id,
