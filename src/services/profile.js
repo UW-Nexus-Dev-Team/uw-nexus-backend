@@ -81,7 +81,7 @@ exports.getProfile = (req, res) => {
 }
 
 exports.getUserProfile = (req, res) => {
-    Profile.find({user_id: req.params.user_id}).populate('favorite_projects', 'title')
+    Profile.findOne({user_id: req.params.user_id}).populate('favorite_projects', 'title')
         .exec((err,profile) => {
             if (err) {
                 res.status(500).send({ message: err.message });

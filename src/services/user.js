@@ -72,19 +72,24 @@ exports.createUser = (req, res) => {
 };
 
 // The rest aren't necessary as of now, but may be turned into endpoints later on (03/31/22)
-exports.getUser = (req, res) => {
-    User.findOne({user_id: req.params.user_id}).select("-password")
-        .exec((err,user) => {
-            if (err) {
-                res.status(500).send({ message: err.message });
-                return;
-            } else if (!user) {
-                res.status(400).send({message: "User does not exist!"});
-                return;
-            } else {
-                res.json({User})
-            }
-        })
+exports.getUser = async(req, res) => {
+  try {
+    let user = await User.findById(req.params.user_id)
+    if(!user){
+        res.status(400).send({message: "User does not exist!"});
+        return;
+    }
+    if (user.id != req.id) {
+        res.status(400).send({ message: "User is not owned by this user!"});
+        return;
+    }
+    else {
+        res.status(200).json({email: user.email})
+    }
+  } catch(err) {
+    res.status(500).send({ message: err.message });
+    return;
+  }
 }
 
 exports.updateUser = async (req, res) => {

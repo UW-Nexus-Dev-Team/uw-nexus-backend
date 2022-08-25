@@ -65,6 +65,8 @@ const UserService = require('../services/user.js');
     */
     app.post("/api/auth/signIn", UserService.signIn);
 
+    app.get("/api/auth/getUser/:user_id", UserService.getUser);
+
     /**
     * @apiEndpoint signOut
     * @Result
