@@ -23,7 +23,7 @@ exports.createProject = (req, res) => {
         description: req.body.description,
         skill: req.body.skill,
         roles: req.body.roles,
-        categories: req.body.categories
+        interests: req.body.categories
     });
 
     project.save((err, project) => {
