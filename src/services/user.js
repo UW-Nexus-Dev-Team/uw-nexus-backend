@@ -32,7 +32,7 @@ exports.signIn = (req, res) => {
         });
 
         res.cookie("accessToken", token, {
-            maxAge: 3.6e+6, // 24 hours
+            maxAge: 86400, // 24 hours
             sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
             secure: process.env.NODE_ENV === "production",
             httpOnly: true
