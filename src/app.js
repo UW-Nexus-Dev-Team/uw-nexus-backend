@@ -36,7 +36,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(express.urlencoded({extended: true}));
-app.use(express.json()) 
+app.use(express.json({limit: '100mb'})) 
 app.use(authJwt)
 
 
@@ -105,3 +105,4 @@ require('./routes/auth.js')(app);
 require('./routes/projects.js')(app);
 require('./routes/profile.js')(app, upload);
 require('./routes/constants.js')(app);
+require('./routes/email.js')(app);
