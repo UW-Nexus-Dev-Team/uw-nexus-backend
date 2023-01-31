@@ -1,7 +1,10 @@
 const config = require('../config/index.js');
 const User = require('../models/user.js');
+const PassReset = require('../models/password-reset.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const exp = require('constants');
 
 exports.signIn = (req, res) => {
     User.findOne({ email: req.body.email })
@@ -129,5 +132,41 @@ exports.deleteUser = async(req, res)=> {
     }catch(err) {
         res.status(500).send({ message: err.message });
         return;
+    }
+}
+
+exports.resetPassword = async(req, res) => {
+    const user_email = req.body.email;
+    if (!user_email) return res.status(400).send({ message: "No email specified!" });
+
+    try {
+        let user = await User.findOne({ email: user_email }).exec();
+
+        // this might be more appropriate as a 404, but that leads to the security question
+        // because anyone can see this in the dev tools network panel
+        if (!user) {
+            return res.status(400).send();
+        }
+
+        const _id = user.id;
+        const token = crypto.randomBytes(64).toString('hex');
+        let expiry_date = new Date();
+        expiry_date.setHours(expiry_date.getHours() + 24);
+
+        let reset = new PassReset({
+            userId: _id,
+            email: user_email,
+            token: bcrypt.hashSync(token, 10),
+            token_expiry: expiry_date
+        });
+
+        reset = await reset.save();
+        if (!reset) return res.status(500).send();
+
+        return res.status(200).send({ reset_token: token });
+        
+    } 
+    catch(err) {
+        return res.status(500).send({ message: err.message });
     }
 }

@@ -76,4 +76,5 @@ const UserService = require('../services/user.js');
     */
     app.delete("/api/auth/signOut", UserService.signOut);
 
+    app.post("/api/auth/resetPassword", UserService.resetPassword);
  };
