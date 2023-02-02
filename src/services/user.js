@@ -4,7 +4,7 @@ const PassReset = require('../models/password-reset.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const exp = require('constants');
+const sgMail = require('@sendgrid/mail');
 
 exports.signIn = (req, res) => {
     User.findOne({ email: req.body.email })
@@ -136,10 +136,59 @@ exports.deleteUser = async(req, res)=> {
 }
 
 exports.resetPassword = async(req, res) => {
-    const user_email = req.body.email;
-    if (!user_email) return res.status(400).send({ message: "No email specified!" });
 
     try {
+
+        // flow for actually resetting password
+        if (req.query.token) {
+            const token = req.query.token;
+
+            // find matching hash in db
+
+            // the below is not allowed on free tiers, but if this app someday moves to 
+            // a paid tier, we could use this shorter solution
+            // let passReset = await PassReset.findOne().$where(function() {
+            //     bcrypt.compareSync(token, this.token);
+            // }).exec();
+
+            let passReset;
+            const allResets = await PassReset.find({}).exec();
+            for (const pr of allResets) {
+                if (bcrypt.compareSync(token, pr.token)) {
+                    passReset = pr;
+                }
+            }
+
+            if (!passReset) {
+                return res.status(400).send({ message: "Invalid reset token!" });
+            }
+
+            // check if token is still valid
+            let currentTime = new Date();
+            if (currentTime > passReset.token_expiry) {
+                return res.status(400).send({ message: "Expired reset token!" });
+            }
+
+            // delete all tokens corresponding to this user
+            const userId = passReset.userId;
+            await PassReset.deleteMany({ userId: userId });
+
+            // save new password
+            const new_pass = req.body.new_password;
+            if (!new_pass) return res.status(400).send({ message: "No new password specified!" });
+
+            const hash_new_pass = bcrypt.hashSync(new_pass, 10);
+
+            await User.findByIdAndUpdate(userId, { password: hash_new_pass }, { useFindAndModify: false }, (err, user) => {
+                if (err) return res.status(500).send({ message: err.message });
+                if (!user) return res.status(400).send({ message: "Invalid reset token!" });
+            });
+            return res.status(200).send();
+        }
+
+        // we don't have a token yet: generate one and send the link in an email
+        const user_email = req.body.email;
+        if (!user_email) return res.status(400).send({ message: "No email specified!" });
         let user = await User.findOne({ email: user_email }).exec();
 
         // this might be more appropriate as a 404, but that leads to the security question
@@ -148,6 +197,7 @@ exports.resetPassword = async(req, res) => {
             return res.status(400).send();
         }
 
+        // generate token and create new PasswordReset instance in db
         const _id = user.id;
         const token = crypto.randomBytes(64).toString('hex');
         let expiry_date = new Date();
@@ -160,10 +210,32 @@ exports.resetPassword = async(req, res) => {
             token_expiry: expiry_date
         });
 
-        reset = await reset.save();
-        if (!reset) return res.status(500).send();
+        await reset.save();
+        return res.status(200).send(token); // FIXME temporary until we get the api key for sendgrid
 
-        return res.status(200).send({ reset_token: token });
+        // send email
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        const msg = {
+            to: user_email,
+            from: 'uw.nexus@gmail.com',
+            template_id: `${process.env.SENDGRID_PASS_RESET_TEMP_ID}`,
+            dynamic_template_data: {
+                to_name: user.first_name,
+                message: `https://nexusatuw.com/api/auth/resetPassword?token=${token}`
+            }
+        }
+
+        sgMail
+        .send(msg)
+        .then(() => {
+            console.log('Email sent');
+            return res.status(200).send("Successfully sent email");
+        })
+        .catch((error) => {
+            console.error(error);
+            return res.status(500).send("Email not sent. Try again later.");
+        });
         
     } 
     catch(err) {
