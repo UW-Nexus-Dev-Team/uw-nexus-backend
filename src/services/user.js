@@ -211,7 +211,6 @@ exports.resetPassword = async(req, res) => {
         });
 
         await reset.save();
-        return res.status(200).send(token); // FIXME temporary until we get the api key for sendgrid
 
         // send email
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -229,12 +228,11 @@ exports.resetPassword = async(req, res) => {
         sgMail
         .send(msg)
         .then(() => {
-            console.log('Email sent');
-            return res.status(200).send("Successfully sent email");
+            return res.status(200).send({success: true});
         })
         .catch((error) => {
             console.error(error);
-            return res.status(500).send("Email not sent. Try again later.");
+            return res.status(500).send({success: false});
         });
         
     } 
