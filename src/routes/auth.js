@@ -76,4 +76,19 @@ const UserService = require('../services/user.js');
     */
     app.delete("/api/auth/signOut", UserService.signOut);
 
+    /**
+     * @apiEndpoint resetPassword
+     * If a token isn't included in query params, generates
+     * a reset token and sends an email. If a token is included,
+     * attempts to reset the password with the provided new password.
+     * @Request
+     * {
+     *  "email": {String}
+     * }
+     * @Result
+     * {
+     *  "success": {Boolean}
+     * }
+     */
+    app.post("/api/auth/resetPassword", UserService.resetPassword);
  };
