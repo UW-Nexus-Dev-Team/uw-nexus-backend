@@ -221,7 +221,7 @@ exports.resetPassword = async(req, res) => {
             template_id: `${process.env.SENDGRID_PASS_RESET_TEMP_ID}`,
             dynamic_template_data: {
                 to_name: user.first_name,
-                message: `https://nexusatuw.com/api/auth/resetPassword?token=${token}`
+                message: `https://nexusatuw.com/resetPassword?token=${token}`
             }
         }
 
