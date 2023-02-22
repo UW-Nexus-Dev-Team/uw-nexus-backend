@@ -128,7 +128,10 @@ exports.editProfilePicture = async (req, res) => {
 
     s3.getObject(bucketParams, (err, data) => {
         if (err) {
-            return res.status(400).send({message: err.message});
+            if (err.code == 'NoSuchKey') {
+                return res.status(404).send({message: 'Profile pic not found for user ' + req.id});
+            }
+            return res.status(400).send({message: err});
         }
 
         return res.status(200).header('Content-Type', 'image/jpeg').send(data.Body);
