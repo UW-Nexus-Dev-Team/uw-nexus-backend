@@ -144,7 +144,7 @@ exports.resetPassword = async(req, res) => {
 
             // find matching hash in db
 
-            // the below is not allowed on free tiers, but if this app someday moves to 
+            // the below is not allowed on free tiers of mongodb, but if this app someday moves to 
             // a paid tier, we could use this shorter solution
             // let passReset = await PassReset.findOne().$where(function() {
             //     bcrypt.compareSync(token, this.token);

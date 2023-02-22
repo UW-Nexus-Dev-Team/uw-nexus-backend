@@ -1,6 +1,7 @@
 const config = require('../config/index.js');
 const Profile = require('../models/profile.js');
 const mongoose = require('mongoose');
+const AWS = require('aws-sdk');
 
 // SET UP GRIDFS CONNECTION
 const url = config.MONGODB_URI;
@@ -11,6 +12,10 @@ connect.once('open', () => {
     bucketName: 'uploads',
     });
 });
+
+// AWS CONFIG
+AWS.config.update({region: 'us-west-2'});
+s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 exports.createProfile = (req, res) => {
     if (!req.id) {
@@ -109,6 +114,25 @@ exports.getAllProfiles = (req, res) => {
             profiles = profiles.filter(profile => !profile.private)
             res.json(profiles)
         })
+}
+
+exports.editProfilePicture = async (req, res) => {
+    if (!req.id) {
+        return res.status(401).send({message: "User is not signed in."});
+    }
+
+    const bucketParams = {
+        Bucket: 'nexusatuw',
+        Key: `ProfilePictures/${req.id}.jpg`
+    };
+
+    s3.getObject(bucketParams, (err, data) => {
+        if (err) {
+            return res.status(400).send({message: err.message});
+        }
+
+        return res.status(200).header('Content-Type', 'image/jpeg').send(data.Body);
+    });
 }
 
 exports.updateProfile = async (req, res) => {

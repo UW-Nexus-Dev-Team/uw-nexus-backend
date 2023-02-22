@@ -38,49 +38,54 @@ module.exports = function(app, upload) {
     });
   };
 
-app.post('/api/profile/createProfile',
-    uploadFile,
-    ProfileService.createProfile
+  app.post('/api/profile/createProfile',
+      uploadFile,
+      ProfileService.createProfile
+    );
+
+  app.get("/api/profile/allProfiles", 
+    ProfileService.getAllProfiles
+    );
+
+  app.get(
+      "/api/profile/search",
+      ProfileService.searchProfiles
+    );
+
+  app.get(
+      "/api/profile/user/:user_id",
+      ProfileService.getUserProfile
+    );
+
+  app.get(
+      "/api/profile/:profile_id",
+      ProfileService.getProfile
+    );
+
+  app.post(
+      "/api/profile/update/:profile_id",
+      uploadFile,
+      ProfileService.updateProfile
+    );
+
+  app.delete(
+      "/api/profile/delete/:profile_id",
+      ProfileService.deleteProfile
+    );
+
+  app.post(
+    "/api/profile/resume/delete",
+    ProfileService.deleteProfileResume
   );
 
-app.get("/api/profile/allProfiles", 
-  ProfileService.getAllProfiles
+  app.get(
+    "/api/profile/resume/:file_id",
+    ProfileService.getProfileResume
   );
 
-app.get(
-    "/api/profile/search",
-    ProfileService.searchProfiles
+  app.get(
+    "/api/profile/photo/:photo_id",
+    ProfileService.editProfilePicture
   );
-
-app.get(
-    "/api/profile/user/:user_id",
-    ProfileService.getUserProfile
-  );
-
-app.get(
-    "/api/profile/:profile_id",
-    ProfileService.getProfile
-  );
-
-app.post(
-    "/api/profile/update/:profile_id",
-    uploadFile,
-    ProfileService.updateProfile
-  );
-
-app.delete(
-    "/api/profile/delete/:profile_id",
-    ProfileService.deleteProfile
-  );
-
-app.post(
-  "/api/profile/resume/delete",
-  ProfileService.deleteProfileResume
-);
-
-app.get(
-  "/api/profile/resume/:file_id",
-  ProfileService.getProfileResume
-);
 
 };
