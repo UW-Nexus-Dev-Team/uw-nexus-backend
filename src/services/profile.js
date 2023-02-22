@@ -133,8 +133,8 @@ exports.getProfilePicture = async (req, res) => {
             }
             return res.status(400).send({message: err});
         }
-
-        return res.status(200).header('Content-Type', 'image/jpeg').send(data.Body);
+        
+        return res.status(200).header('Content-Type', data.ContentType).send(data.Body);
     });
 }
 
