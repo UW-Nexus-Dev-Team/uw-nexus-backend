@@ -84,8 +84,8 @@ module.exports = function(app, upload) {
   );
 
   app.get(
-    "/api/profile/photo/:photo_id",
-    ProfileService.editProfilePicture
+    "/api/profile/photo/:user_id",
+    ProfileService.getProfilePicture
   );
 
 };

@@ -116,7 +116,7 @@ exports.getAllProfiles = (req, res) => {
         })
 }
 
-exports.editProfilePicture = async (req, res) => {
+exports.getProfilePicture = async (req, res) => {
     if (!req.id) {
         return res.status(401).send({message: "User is not signed in."});
     }
