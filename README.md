@@ -15,7 +15,7 @@ npm install
 touch .env
 ```
 4. Copy .env file contents from the NEXUS shared google drive and paste it into the newly created .env file
-- https://drive.google.com/file/d/1VNscx-Ef5_yzZKC_vDFWiR_O62XJi1-c/view?usp=sharing
+- https://drive.google.com/file/d/1Y-w7SKx3uugZvcYDxRYxj-r7xKEDhx66/view?usp=share_link
 ### Standard Use:
 1. Run the server: 
 ```
