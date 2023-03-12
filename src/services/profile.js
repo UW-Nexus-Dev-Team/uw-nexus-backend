@@ -140,7 +140,7 @@ exports.getProfilePicture = async (req, res) => {
 
 
 exports.updateProfilePicture = async (req, res) => {
-    if (!req.id) {
+    if (!req.id || req.id !== req.params.user_id) {
         return res.status(401).send({ message: "User is not signed in." });
     }
 

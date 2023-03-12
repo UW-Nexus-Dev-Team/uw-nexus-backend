@@ -34,7 +34,7 @@ module.exports = function(app, docUpload, imgUpload) {
   const uploadFile = (req, res, next, uploader) => {
     const uploaded = uploader.single('file');
     uploaded(req, res, function (err) {
-      
+
       if (err instanceof multer.MulterError) {
         console.log(err)
         return res.status(400).send('File too large');
