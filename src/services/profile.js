@@ -162,7 +162,6 @@ exports.updateProfilePicture = async (req, res) => {
 
         return res.status(200).send();
     });
-
 }
 
 exports.updateProfile = async (req, res) => {
