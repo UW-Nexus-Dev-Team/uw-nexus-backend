@@ -1,6 +1,8 @@
 const ProfileService = require('../services/profile.js');
 const multer = require('multer');
 
+const imgMulter = multer();
+
 
 /**
  * @apiDefine Profile API
@@ -31,7 +33,7 @@ module.exports = function(app, upload) {
         console.log(err)
         return res.status(400).send('File too large');
       } else if (err) {
-        if (err === 'filetype') return res.status(400).send('PDF or DocX files only');
+        if (err === 'filetype') return res.status(400).send('Invalid file type');
         return res.sendStatus(500);
       }
       next();
@@ -86,6 +88,12 @@ module.exports = function(app, upload) {
   app.get(
     "/api/profile/photo/:user_id",
     ProfileService.getProfilePicture
+  );
+
+  app.post(
+    "/api/profile/photo/:user_id",
+    imgMulter.single('profilePhoto'),
+    ProfileService.updateProfilePicture
   );
 
 };

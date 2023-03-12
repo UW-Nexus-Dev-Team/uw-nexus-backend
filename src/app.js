@@ -92,7 +92,7 @@ const upload = multer({ storage,
 });
 
 function checkFileType(file, cb) {
-  const filetypes = /pdf|docx/;
+  const filetypes = /pdf|docx|jpg|png|gif/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
   if (mimetype && extname) return cb(null, true);

@@ -121,21 +121,48 @@ exports.getProfilePicture = async (req, res) => {
         return res.status(401).send({message: "User is not signed in."});
     }
 
-    const bucketParams = {
+    const getParams = {
         Bucket: 'nexusatuw',
-        Key: `ProfilePictures/${req.id}.jpg`
-    };
+        Key: `ProfilePictures/${req.id}`
+    }
 
-    s3.getObject(bucketParams, (err, data) => {
+    s3.getObject(getParams, (err, img) => {
         if (err) {
             if (err.code == 'NoSuchKey') {
-                return res.status(404).send({message: 'Profile pic not found for user ' + req.id});
+                return res.status(404).send({ message: 'Profile pic not found for user ' + req.id });
             }
-            return res.status(400).send({message: err});
+            return res.status(400).send({ message: err.message });
         }
-        
-        return res.status(200).header('Content-Type', data.ContentType).send(data.Body);
+
+        return res.status(200).header('Content-Type', img.ContentType).send(img.Body);
     });
+}
+
+
+exports.updateProfilePicture = async (req, res) => {
+    if (!req.id) {
+        return res.status(401).send({ message: "User is not signed in." });
+    }
+
+    if (!req.file) {
+        return res.status(400).send({ message: "No file uploaded." })
+    }
+
+    const params = {
+        Body: req.file.buffer,
+        Bucket: 'nexusatuw',
+        Key: `ProfilePictures/${req.id}`,
+        ContentType: req.file.mimetype
+    }
+
+    s3.putObject(params, (err, data) => {
+        if (err) {
+            res.status(400).send({ message: err.message });
+        }
+
+        return res.status(200).send();
+    });
+
 }
 
 exports.updateProfile = async (req, res) => {
