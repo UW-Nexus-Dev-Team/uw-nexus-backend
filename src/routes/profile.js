@@ -1,9 +1,6 @@
 const ProfileService = require('../services/profile.js');
 const multer = require('multer');
 
-const imgMulter = multer();
-
-
 /**
  * @apiDefine Profile API
  *
@@ -16,7 +13,7 @@ const imgMulter = multer();
  * @apiHeader {String}  cookie       Includes jwt token in `jwt` field, e.g. `jwt={token}`
  * @apiHeader {Boolean} credentials  Must be set to `true`
  */
-module.exports = function(app, upload) {
+module.exports = function(app, docUpload, imgUpload) {
   app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
@@ -26,12 +23,22 @@ module.exports = function(app, upload) {
   });
 
   // upload middleware
-  const uploadFile = (req, res, next) => {
-    const uploaded = upload.single('file');
+  const uploadImg = (req, res, next) => {
+    uploadFile(req, res, next, imgUpload);
+  }
+
+  const uploadResume = (req, res, next) => {
+    uploadFile(req, res, next, docUpload);
+  }
+
+  const uploadFile = (req, res, next, uploader) => {
+    const uploaded = uploader.single('file');
     uploaded(req, res, function (err) {
+      
       if (err instanceof multer.MulterError) {
         console.log(err)
         return res.status(400).send('File too large');
+
       } else if (err) {
         if (err === 'filetype') return res.status(400).send('Invalid file type');
         return res.sendStatus(500);
@@ -41,7 +48,7 @@ module.exports = function(app, upload) {
   };
 
   app.post('/api/profile/createProfile',
-      uploadFile,
+      uploadResume,
       ProfileService.createProfile
     );
 
@@ -66,7 +73,7 @@ module.exports = function(app, upload) {
 
   app.post(
       "/api/profile/update/:profile_id",
-      uploadFile,
+      uploadResume,
       ProfileService.updateProfile
     );
 
@@ -92,7 +99,7 @@ module.exports = function(app, upload) {
 
   app.post(
     "/api/profile/photo/:user_id",
-    imgMulter.single('profilePhoto'),
+    uploadImg,
     ProfileService.updateProfilePicture
   );
 

@@ -84,25 +84,34 @@ const storage = new GridFsStorage({
   }
 });
 
-const upload = multer({ storage,
+const docUpload = multer({ storage,
   limits: {fileSize: 200000000},
   fileFilter: function (req, file, cb) {
-    checkFileType(file, cb);
+    checkFileType(file, cb, /pdf|docx/);
   },
 });
 
-function checkFileType(file, cb) {
-  const filetypes = /pdf|docx|jpg|png|gif/;
+const imgUpload = multer({
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb, /jpg|jpeg|gif|png/);
+  },
+  limits: {
+    fileSize: 5000000
+  }
+});
+
+function checkFileType(file, cb, filetypes) {
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
   if (mimetype && extname) return cb(null, true);
   cb('filetype');
 }
 
-exports.upload = upload;
+exports.docUpload = docUpload;
+exports.imgUpload = imgUpload;
 
 require('./routes/auth.js')(app);
 require('./routes/projects.js')(app);
-require('./routes/profile.js')(app, upload);
+require('./routes/profile.js')(app, docUpload, imgUpload);
 require('./routes/constants.js')(app);
 require('./routes/email.js')(app);
