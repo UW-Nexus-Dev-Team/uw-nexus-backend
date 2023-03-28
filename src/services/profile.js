@@ -1,6 +1,7 @@
 const config = require('../config/index.js');
 const Profile = require('../models/profile.js');
 const mongoose = require('mongoose');
+const AWS = require('aws-sdk');
 
 // SET UP GRIDFS CONNECTION
 const url = config.MONGODB_URI;
@@ -11,6 +12,10 @@ connect.once('open', () => {
     bucketName: 'uploads',
     });
 });
+
+// AWS CONFIG
+AWS.config.update({region: 'us-west-2'});
+s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 exports.createProfile = (req, res) => {
     if (!req.id) {
@@ -109,6 +114,54 @@ exports.getAllProfiles = (req, res) => {
             profiles = profiles.filter(profile => !profile.private)
             res.json(profiles)
         })
+}
+
+exports.getProfilePicture = async (req, res) => {
+    if (!req.id) {
+        return res.status(401).send({message: "User is not signed in."});
+    }
+
+    const getParams = {
+        Bucket: 'nexusatuw',
+        Key: `ProfilePictures/${req.id}`
+    }
+
+    s3.getObject(getParams, (err, img) => {
+        if (err) {
+            if (err.code == 'NoSuchKey') {
+                return res.status(404).send({ message: 'Profile pic not found for user ' + req.id });
+            }
+            return res.status(400).send({ message: err.message });
+        }
+
+        return res.status(200).header('Content-Type', img.ContentType).send(img.Body);
+    });
+}
+
+
+exports.updateProfilePicture = async (req, res) => {
+    if (!req.id || req.id !== req.params.user_id) {
+        return res.status(401).send({ message: "User is not signed in." });
+    }
+
+    if (!req.file) {
+        return res.status(400).send({ message: "No file uploaded." })
+    }
+
+    const params = {
+        Body: req.file.buffer,
+        Bucket: 'nexusatuw',
+        Key: `ProfilePictures/${req.id}`,
+        ContentType: req.file.mimetype
+    }
+
+    s3.putObject(params, (err, data) => {
+        if (err) {
+            res.status(400).send({ message: err.message });
+        }
+
+        return res.status(200).send();
+    });
 }
 
 exports.updateProfile = async (req, res) => {
