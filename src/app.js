@@ -93,7 +93,7 @@ const docUpload = multer({ storage,
 
 const imgUpload = multer({
   fileFilter: function (req, file, cb) {
-    checkFileType(file, cb, /jpg|jpeg|gif|png/);
+    checkFileType(file, cb, /jpg|jpeg|png/);
   },
   limits: {
     fileSize: 5000000

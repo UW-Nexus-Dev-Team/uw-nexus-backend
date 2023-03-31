@@ -103,4 +103,9 @@ module.exports = function(app, docUpload, imgUpload) {
     ProfileService.updateProfilePicture
   );
 
+  app.delete(
+    "/api/profile/photo/:user_id",
+    ProfileService.deleteProfilePicture
+  )
+
 };

@@ -48,6 +48,7 @@ exports.getAllProjects = (req,res) => {
 };
 
 exports.getProjectbyId = (req,res) => {
+    console.log(req.params.project_id);
     Project.findOne({ _id: req.params.project_id }).populate(userPopulateQuery)
         .exec((err, project) => {
           if (err) {

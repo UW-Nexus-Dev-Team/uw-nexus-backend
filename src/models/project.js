@@ -55,7 +55,8 @@ const projectSchema = new mongoose.Schema({
           enum:['1-3 months','3-6 months','6-9 months', 'More than 9 months']
         },
         type: {type: String, enum: constants.ROLES_TYPES},
-        private: {type: Boolean}
+        private: {type: Boolean},
+        isFilled: {type: Boolean, default: false}
       }]
 })
 

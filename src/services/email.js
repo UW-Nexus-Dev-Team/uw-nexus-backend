@@ -3,7 +3,7 @@ const sgMail = require('@sendgrid/mail');
 exports.submitApplication = (req, res) => {
 
     // assumes all input is validated client-side
-    const { to_name, proj_name,
+    const { projectId, to_name, proj_name,
             position, proj_email, major, year, purpose,
             experience, hours, relevantClasses, willMeet,
             resume, coverLetter, extraQuestions
@@ -27,6 +27,7 @@ exports.submitApplication = (req, res) => {
             "relevantClasses": relevantClasses,
             "willMeet": willMeet,
             "extraQuestions": extraQuestions,
+            "editProjectLink": `http://localhost:8888/editProject/${projectId}`
         },
         attachments: [
             {

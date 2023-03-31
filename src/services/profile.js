@@ -14,7 +14,7 @@ connect.once('open', () => {
 });
 
 // AWS CONFIG
-AWS.config.update({region: 'us-west-2'});
+AWS.config.update({region: 'us-west-2', credentials: {accessKeyId: `${process.env.AWS_S3_SECRET_KEY_ID}`, secretAccessKey: `${process.env.AWS_S3_SECRET_ACCESS_KEY}`}});
 s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 exports.createProfile = (req, res) => {
@@ -133,7 +133,6 @@ exports.getProfilePicture = async (req, res) => {
             }
             return res.status(400).send({ message: err.message });
         }
-
         return res.status(200).header('Content-Type', img.ContentType).send(img.Body);
     });
 }
@@ -143,7 +142,7 @@ exports.updateProfilePicture = async (req, res) => {
     if (!req.id || req.id !== req.params.user_id) {
         return res.status(401).send({ message: "User is not signed in." });
     }
-
+    
     if (!req.file) {
         return res.status(400).send({ message: "No file uploaded." })
     }
@@ -160,6 +159,24 @@ exports.updateProfilePicture = async (req, res) => {
             res.status(400).send({ message: err.message });
         }
 
+        return res.status(200).send();
+    });
+}
+
+exports.deleteProfilePicture = async (req, res) => {
+    if (!req.id || req.id !== req.params.user_id) {
+        return res.status(401).send({ message: "User is not signed in." });
+    }
+
+    const params = {
+        Bucket: 'nexusatuw',
+        Key: `ProfilePictures/${req.id}`,
+    }
+
+    s3.deleteObject(params, (err, data) => {
+        if (err) {
+            res.status(400).send({ message: err.message });
+        }
         return res.status(200).send();
     });
 }
@@ -189,7 +206,6 @@ exports.updateProfile = async (req, res) => {
             }
             if (req.body.favorite_projects) {
                 let projectArray = JSON.parse(req.body.favorite_projects)
-                console.log(projectArray.length)
                 if (projectArray.length > 20) {
                     throw new Error("User has a max of 20 favorited projects.")
                 }
@@ -295,7 +311,6 @@ exports.deleteProfileResume = async (req, res) => {
 }
 
 exports.getProfileResume = (req,res) => {
-    console.log("getting profile resume!");
     const id = new mongoose.Types.ObjectId(req.params.file_id)
     gfs.find({_id: id}).toArray((err, files) => {
         if (!files[0] || files.length === 0) {
@@ -305,7 +320,6 @@ exports.getProfileResume = (req,res) => {
             });
         }
         if (files[0].contentType === 'application/pdf') {
-            console.log(files[0]);
             // render image to browser
             // gfs.openDownloadStream(id).pipe(res);
             // send a base64 pdf for React to render
