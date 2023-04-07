@@ -36,11 +36,11 @@ module.exports = function(app, docUpload, imgUpload) {
     uploaded(req, res, function (err) {
 
       if (err instanceof multer.MulterError) {
-        console.log(err)
         return res.status(400).send('File too large');
 
       } else if (err) {
         if (err === 'filetype') return res.status(400).send('Invalid file type');
+        console.error(err)
         return res.sendStatus(500);
       }
       next();

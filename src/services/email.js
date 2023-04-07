@@ -49,7 +49,6 @@ exports.submitApplication = (req, res) => {
       sgMail
         .send(msg)
         .then(() => {
-          console.log('Email sent');
           return res.status(200).send("Successfully sent email");
         })
         .catch((error) => {
@@ -76,7 +75,6 @@ exports.resetPassword = (req, res) => {
     sgMail
     .send(msg)
     .then(() => {
-      console.log('Email sent');
       return res.status(200).send("Successfully sent email");
     })
     .catch((error) => {
