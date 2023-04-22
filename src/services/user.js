@@ -5,6 +5,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
+const sgHelpers = require('@sendgrid/helpers')
+
+const Mail = sgHelpers.classes.Mail;
+const MailPersonalization = sgHelpers.classes.Personalization;
 
 exports.signIn = (req, res) => {
     User.findOne({ email: req.body.email })
@@ -72,6 +76,29 @@ exports.createUser = (req, res) => {
         }
         res.send({ message: "User was registered successfully!" });
     })
+
+    // send welcome email
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+    const mail = new Mail();
+    mail.setFrom('uw.nexus@gmail.com');
+    mail.setSubject('Welcome to Nexus!');
+    // TODO add content
+    mail.addTextContent();
+    mail.addHtmlContent();
+
+    const personalization = new MailPersonalization();
+    personalization.setTo(req.body.email);
+    peresonalization.addSubstitution();
+    mail.addPersonalization(personalization);
+
+    try {
+        sgMail.send(mail)
+    } catch (e) {
+        // ignored for now; it's ok if mail sending fails.
+    }
+
+    return res.status(200).send();
 };
 
 // The rest aren't necessary as of now, but may be turned into endpoints later on (03/31/22)
