@@ -46,6 +46,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
+    "eslint": "^8.39.0",
     "nodemon": "^2.0.19"
   }
 }
