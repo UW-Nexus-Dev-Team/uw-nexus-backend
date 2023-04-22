@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "NODE_ENV=production node src/app.js",
-    "prod": "NODE_ENV=production node src/app.js"
+    "prod": "NODE_ENV=production node src/app.js",
+    "lint": "npx eslint src",
+    "lint:fix": "npx eslint src --fix"
   },
   "repository": {
     "type": "git",

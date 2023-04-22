@@ -14,5 +14,5 @@ authJwt = (req,res,next) => {
         });
     }
     next();
-}
+};
 module.exports = authJwt;
