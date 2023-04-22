@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(methodOverride("_method"));
 
-app.set("trust proxy", 1); 
+app.set("trust proxy", 1);
 
 // possible fix the CORS issue - Ajay's
 app.use(function (req, res, next) {
@@ -36,7 +36,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(express.urlencoded({extended: true}));
-app.use(express.json({limit: "100mb"})); 
+app.use(express.json({limit: "100mb"}));
 app.use(authJwt);
 
 

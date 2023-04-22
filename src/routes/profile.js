@@ -52,7 +52,7 @@ module.exports = function(app, docUpload, imgUpload) {
         ProfileService.createProfile
     );
 
-    app.get("/api/profile/allProfiles", 
+    app.get("/api/profile/allProfiles",
         ProfileService.getAllProfiles
     );
 

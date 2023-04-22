@@ -142,7 +142,7 @@ exports.updateProfilePicture = async (req, res) => {
     if (!req.id || req.id !== req.params.user_id) {
         return res.status(401).send({ message: "User is not signed in." });
     }
-    
+
     if (!req.file) {
         return res.status(400).send({ message: "No file uploaded." });
     }
@@ -217,7 +217,7 @@ exports.updateProfile = async (req, res) => {
             if (req.body.interests) updated.interests = JSON.parse(req.body.interests);
 
             if (req.body.skills) updated.skills = JSON.parse(req.body.skills);
-            
+
             profile = await Profile.findOneAndUpdate({_id: req.params.profile_id}, updated, {
                 new: true,
                 runValidators: true
@@ -246,7 +246,7 @@ exports.deleteProfile = async(req, res)=> {
         }
         await Profile.deleteOne({_id:req.params.profile_id});
         res.send({ message: "User profile was deleted successfully!" });
-        
+
     }catch(err) {
         res.status(500).send({ message: err.message });
         return;

@@ -10,14 +10,16 @@ rules:
   indent:
     - error
     - 4
-  linebreak-style:
-    - error
-    - windows
   quotes:
     - error
     - double
   semi:
     - error
     - always
+  no-trailing-spaces:
+    - error
+  curly:
+    - error
+    - multi-line
   no-undef:
     - off

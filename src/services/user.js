@@ -128,7 +128,7 @@ exports.deleteUser = async(req, res)=> {
         await User.deleteOne({_id:req.params.id});
         await Profile.deleteOne({user_id:req.params.id});
         res.send({ message: "User was deleted successfully!" });
-        
+
     }catch(err) {
         res.status(500).send({ message: err.message });
         return;
@@ -144,7 +144,7 @@ exports.resetPassword = async(req, res) => {
 
             // find matching hash in db
 
-            // the below is not allowed on free tiers of mongodb, but if this app someday moves to 
+            // the below is not allowed on free tiers of mongodb, but if this app someday moves to
             // a paid tier, we could use this shorter solution
             // let passReset = await PassReset.findOne().$where(function() {
             //     bcrypt.compareSync(token, this.token);
@@ -233,8 +233,8 @@ exports.resetPassword = async(req, res) => {
                 console.error(error);
                 return res.status(500).send({success: false});
             });
-        
-    } 
+
+    }
     catch(err) {
         return res.status(500).send({ message: err.message });
     }

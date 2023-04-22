@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const constants = require("../constants/constants.js");
 
 const profileSchema = new mongoose.Schema({
-    user_id:  {  
+    user_id:  {
         type: mongoose.Schema.Types.ObjectID,
         ref: "User" },
     first_name: { type: String },

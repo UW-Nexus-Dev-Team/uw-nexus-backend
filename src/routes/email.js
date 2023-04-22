@@ -8,7 +8,7 @@ module.exports = function(app) {
         );
         next();
     });
- 
+
 
     /* sends an email via SendGrid to the project owner,
         including the applicant's information
@@ -26,5 +26,5 @@ module.exports = function(app) {
         EmailService.resetPassword
     );
 
- 
+
 };

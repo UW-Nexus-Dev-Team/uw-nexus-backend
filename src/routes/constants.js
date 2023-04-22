@@ -28,5 +28,5 @@ module.exports = function(app) {
             res.send(constants.MAJORS);
         }
     );
-    
+
 };

@@ -27,7 +27,7 @@ module.exports = function(app) {
     /**
     * @apiEndpoint createUser
     * @Request
-    * { 
+    * {
         "email": {String},
         "password": {String},
         "first_name": {String},
