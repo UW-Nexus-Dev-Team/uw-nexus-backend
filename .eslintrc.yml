@@ -1,0 +1,25 @@
+env:
+  browser: true
+  commonjs: true
+  es2021: true
+extends: eslint:recommended
+overrides: []
+parserOptions:
+  ecmaVersion: latest
+rules:
+  indent:
+    - error
+    - 4
+  quotes:
+    - error
+    - double
+  semi:
+    - error
+    - always
+  no-trailing-spaces:
+    - error
+  curly:
+    - error
+    - multi-line
+  no-undef:
+    - off

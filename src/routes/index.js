@@ -1,8 +1,8 @@
-const { Router } = require('express')
+const { Router } = require("express");
 
 const router = Router();
-router.get('/', (req, res) => {
-  res.json('Index route');
+router.get("/", (req, res) => {
+    res.json("Index route");
 });
 
-module.exports = router
+module.exports = router;
