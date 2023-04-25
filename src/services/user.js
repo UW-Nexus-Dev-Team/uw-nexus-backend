@@ -67,29 +67,24 @@ exports.createUser = (req, res) => {
     // save user
     user.save((err) => {
         if (err) {
-            res.status(500).send({ message: err.message });
-            return;
+            return res.status(500).send({ message: err.message });
         }
-        res.send({ message: "User was registered successfully!" });
-    })
+    });
 
     // send welcome email
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    const mail = new Mail();
-    mail.setFrom('uw.nexus@gmail.com');
-    mail.setSubject('Welcome to Nexus!');
-    // TODO add content
-    mail.addTextContent();
-    mail.addHtmlContent();
-
-    const personalization = new MailPersonalization();
-    personalization.setTo(req.body.email);
-    peresonalization.addSubstitution();
-    mail.addPersonalization(personalization);
+    const msg = {
+        to: user.email,
+        from: "uw.nexus@gmail.com",
+        template_id: `${process.env.SENDGRID_WELCOME_TEMP_ID}`,
+        dynamic_template_data: {
+            to_name: user.first_name
+        }
+    };
 
     try {
-        sgMail.send(mail)
+        sgMail.send(msg);
     } catch (e) {
         // ignored for now; it's ok if mail sending fails.
     }
