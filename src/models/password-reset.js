@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const passResetSchema = new Schema({
@@ -8,4 +8,4 @@ const passResetSchema = new Schema({
     token_expiry : {type: Date, required: true},
 });
 
-module.exports = mongoose.model('Password-reset', passResetSchema);
+module.exports = mongoose.model("Password-reset", passResetSchema);
